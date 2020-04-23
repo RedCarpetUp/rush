@@ -1,11 +1,11 @@
 site_name: app_utils
-site_description: Autogenerate Support for PostgreSQL Functions and (soon) Views
+site_description: A starter project to create a standalone TDD project with docker based postgresql fixtures 
 
 theme:
     name: 'readthedocs'
 
-repo_name: olirice/app_utils
-repo_url: https://github.com/olirice/app_utils
+repo_name: redcarpetup/app_utils
+repo_url: https://github.com/redcarpetup/app_utils
 
 nav:
     - Introduction: 'index.md'
