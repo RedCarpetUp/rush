@@ -1,0 +1,18 @@
+site_name: app_utils
+site_description: Autogenerate Support for PostgreSQL Functions and (soon) Views
+
+theme:
+    name: 'readthedocs'
+
+repo_name: olirice/app_utils
+repo_url: https://github.com/olirice/app_utils
+
+nav:
+    - Introduction: 'index.md'
+    - Quickstart: 'quickstart.md'
+    - Examples: 'examples.md'
+    - Roadmap: 'roadmap.md'
+
+markdown_extensions:
+  - codehilite
+  - admonition
