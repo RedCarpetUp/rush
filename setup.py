@@ -21,7 +21,8 @@ setup(
     python_requires=">=3.7",
     packages=find_packages("src"),
     package_dir={"": "src"},
-    install_requires=["alembic", "psycopg2-binary", "sqlalchemy", "parse", "pytest", "pydantic", "docker"],
+    install_requires=["alembic", "psycopg2-binary", "sqlalchemy", "parse", "pytest", "pydantic", "docker",
+                        "pytest-mypy"],
     extras_require={
         "dev": DEV_REQUIRES
     },

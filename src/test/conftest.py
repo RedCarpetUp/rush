@@ -11,7 +11,8 @@ from pathlib import Path
 
 import alembic
 import pytest
-from parse import parse
+from parse import parse,Result
+import sqlalchemy
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker
@@ -20,8 +21,19 @@ from alembic.command import upgrade as alembic_upgrade
 from alembic.command import downgrade as alembic_downgrade
 from alembic.config import Config as AlembicConfig
 
+from typing import Iterator, Dict
+
 import os
 from pathlib import Path
+
+import contextlib
+import os
+import time
+
+import docker
+import psycopg2
+import pytest
+
 
 # from app_utils.pg_function import PGFunction
 
@@ -48,13 +60,6 @@ def build_alembic_config(engine: Engine) -> AlembicConfig:
 
 
 
-import contextlib
-import os
-import time
-
-import docker
-import psycopg2
-import pytest
 
 # import alembic.command
 # import alembic.config
@@ -67,19 +72,19 @@ DB_SETTINGS = {
 
 
 @pytest.fixture(scope='session')
-def docker_client():
+def docker_client() -> docker.DockerClient:
     return docker.from_env()
 
 
 @pytest.fixture(scope='session')
-def postgres_server(docker_client):
+def postgres_server(docker_client:docker.DockerClient) -> Iterator[Dict[str, str]]:
     connection_template = "postgresql://{user}:{pw}@{host}:{port:d}/{db}"
     conn_args = parse(connection_template, PYTEST_DB)
 
     # Don't attempt to instantiate a container if
     # we're on CI
     if "GITHUB_SHA" in os.environ:
-        yield
+        yield {"a":"a"}
         return
     
     container_name = "app_utils_pg"
@@ -132,13 +137,13 @@ def postgres_server(docker_client):
 
 
 @pytest.fixture(scope='session')
-def pg(postgres_server):
+def pg(postgres_server:Dict[str, str]) -> Iterator[Dict[str, str]]:
     upgrade_db(postgres_server,'head')
     yield postgres_server
     downgrade_db(postgres_server,'base')
 
 
-def wait_for_postgres(conn_args):
+def wait_for_postgres(conn_args:Result)->None:
     while True:
         try:
             with contextlib.closing(psycopg2.connect(host =conn_args['host'], port = conn_args['port'],
@@ -153,18 +158,18 @@ def wait_for_postgres(conn_args):
 
 
 
-def upgrade_db(postgres_server, revision):
+def upgrade_db(postgres_server:Dict[str, str], revision:str)->None:
     print("UPGRADING DB --------------")
     alembic_upgrade(config=postgres_server[ "alembic_cfg"], revision=revision)
 
 
-def downgrade_db(postgres_server, revision):
+def downgrade_db(postgres_server:Dict[str, str], revision:str)->None:
     alembic_downgrade(config=postgres_server[ "alembic_cfg"], revision=revision)
 
 
 
 @pytest.fixture(scope='function')
-def alembic( pg):
+def getAlembic( pg:Dict[str, AlembicConfig])-> Iterator[AlembicConfig]:
     alembic_cfg = pg['alembic_cfg']
     yield alembic_cfg
     print('\n----- CREATE alembic_cfg\n')
@@ -174,7 +179,7 @@ def alembic( pg):
     print('\n----- ROLLBACK alembic_cfg\n')
 
 @pytest.fixture(scope='function')
-def session( pg):
+def session( pg :Dict[str, sqlalchemy.orm.session.Session])-> Iterator[sqlalchemy.orm.session.Session]:
     session = pg['session_factory']()
     yield session
     print('\n----- CREATE DB SESSION\n')

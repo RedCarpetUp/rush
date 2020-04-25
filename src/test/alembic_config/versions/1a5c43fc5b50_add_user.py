@@ -16,7 +16,7 @@ branch_labels = None
 depends_on = None
 
 
-def upgrade():
+def upgrade() -> None:
     op.create_table('users',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('performed_by', sa.Integer(), nullable=False),
@@ -30,5 +30,5 @@ def upgrade():
     # pass
 
 
-def downgrade():
+def downgrade() -> None:
     pass
