@@ -1,5 +1,5 @@
 
-#### Setup
+###Setup
 - make sure you are using python > 3.7+
 - setup virtualenv using `virtualenv env` and activate it
 - run `python setup.py install' to install dependencies. keep setup.py updated

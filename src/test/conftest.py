@@ -15,13 +15,15 @@ from parse import parse
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker
+import alembic
 from alembic.command import upgrade as alembic_upgrade
+from alembic.command import downgrade as alembic_downgrade
 from alembic.config import Config as AlembicConfig
 
 import os
 from pathlib import Path
 
-from app_utils.pg_function import PGFunction
+# from app_utils.pg_function import PGFunction
 
 REPO_ROOT = Path(os.path.abspath(os.path.dirname(__file__))).parent.parent.resolve()
 TEST_RESOURCE_ROOT = REPO_ROOT / "src" / "test" / "resources"
@@ -39,18 +41,38 @@ def build_alembic_config(engine: Engine) -> AlembicConfig:
 
     alembic_cfg = AlembicConfig(path_to_alembic_ini)
     # Make double sure alembic references the test database
+    # print(" UPGRADE-----------------"+str(engine.url))
     alembic_cfg.set_main_option("sqlalchemy.url", str(engine.url))
     alembic_cfg.set_main_option("script_location", str((Path("src") / "test" / "alembic_config")))
     return alembic_cfg
 
-@pytest.fixture(scope="session")
-def pg() -> None:
-    """Creates a postgres 12 docker container that can be connected
-    to using the PYTEST_DB connection string"""
 
-    container_name = "app_utils_pg"
-    image = "postgres:12"
 
+import contextlib
+import os
+import time
+
+import docker
+import psycopg2
+import pytest
+
+# import alembic.command
+# import alembic.config
+
+DB_SETTINGS = {
+    'dbname': 'billing',
+    'user': 'postgres',
+    'host': '127.0.0.1',
+}
+
+
+@pytest.fixture(scope='session')
+def docker_client():
+    return docker.from_env()
+
+
+@pytest.fixture(scope='session')
+def postgres_server(docker_client):
     connection_template = "postgresql://{user}:{pw}@{host}:{port:d}/{db}"
     conn_args = parse(connection_template, PYTEST_DB)
 
@@ -59,70 +81,44 @@ def pg() -> None:
     if "GITHUB_SHA" in os.environ:
         yield
         return
-
-    try:
-        is_running = (
-            subprocess.check_output(
-                ["docker", "inspect", "-f", "{{.State.Running}}", container_name]
-            )
-            .decode()
-            .strip()
-            == "true"
-        )
-    except subprocess.CalledProcessError:
-        # Can't inspect container if it isn't running
-        is_running = False
-
-    # if is_running:
-    #     yield
-    #     return
-
-    subprocess.call(
-        [
-            "docker",
-            "run",
-            "--rm",
-            "--name",
-            container_name,
-            "-p",
-            f"{conn_args['port']}:5432",
-            "-d",
-            "-e",
-            f"POSTGRES_DB={conn_args['db']}",
-            "-e",
-            f"POSTGRES_PASSWORD={conn_args['pw']}",
-            "-e",
-            f"POSTGRES_USER={conn_args['user']}",
-            "--health-cmd",
-            "pg_isready",
-            "--health-interval",
-            "3s",
-            "--health-timeout",
-            "3s",
-            "--health-retries",
-            "15",
-            image,
-        ]
-    )
-    # Wait for postgres to become healthy
-    for _ in range(10):
-        out = subprocess.check_output(["docker", "inspect", container_name])
-        inspect_info = json.loads(out)[0]
-        health_status = inspect_info["State"]["Health"]["Status"]
-        if health_status == "healthy":
-            break
-        else:
-            time.sleep(1)
-    else:
-        raise Exception("Could not reach postgres comtainer. Check docker installation")
     
+    container_name = "app_utils_pg"
+    
+    cont = None
+
+    try :
+        cont = docker_client.containers.get(container_name)
+    except Exception as e:
+        cont = docker_client.containers.run(
+            image='postgres:12',
+            name = container_name,
+            detach=True,
+            auto_remove=True,
+            remove=True,
+            ports={5432: conn_args['port']},
+            environment={
+                'POSTGRES_DB': f"{conn_args['db']}",
+                # 'POSTGRES_HOST_AUTH_METHOD': 'trust',
+                "POSTGRES_USER": f"{conn_args['user']}",
+                "POSTGRES_PASSWORD":f"{conn_args['pw']}",
+
+            },
+            healthcheck={
+                    "test": [
+                        "CMD",
+                        "pg_isready"
+                    ],
+                    "interval": 1000000*10000,
+                    "timeout": 1000000*3000,
+                    "retries": 10
+                }
+        )
+    wait_for_postgres(conn_args)
     engine = create_engine(PYTEST_DB, echo=True)
     session_factory = sessionmaker(bind=engine)
     print('\n----- CREATE TEST DB CONNECTION POOL\n')
 
     alembic_cfg = build_alembic_config(engine)
-    with engine.begin() as connection:
-        alembic_upgrade(alembic_cfg, 'head')
     _db = {
         'engine': engine,
         'session_factory': session_factory,
@@ -130,35 +126,60 @@ def pg() -> None:
     }
 
     print(_db)
-    logging.getLogger().warning("boo ")
+
     yield _db
-    subprocess.call(["docker", "stop", container_name])
-    return
+    cont.stop(timeout=1)
 
 
-@pytest.fixture(scope="session")
-def engine(pg: None):
-    """sqlalchemy engine fixture"""
-    eng = create_engine(PYTEST_DB)
-    yield eng
-    eng.dispose()
+@pytest.fixture(scope='session')
+def pg(postgres_server):
+    upgrade_db(postgres_server,'head')
+    yield postgres_server
+    downgrade_db(postgres_server,'base')
 
 
-@pytest.fixture(scope="function")
-def reset(engine):
-    """Fixture to reset between tests"""
+def wait_for_postgres(conn_args):
+    while True:
+        try:
+            with contextlib.closing(psycopg2.connect(host =conn_args['host'], port = conn_args['port'],
+                                        user = conn_args['user'], password = conn_args['pw'],
+                                        database = conn_args['db'] )) as conn:
+               with conn.cursor() as cursor:
+                   cursor.execute('select 1;')
+                   break
+        except psycopg2.Error:
+            time.sleep(0.1)
 
-    def run_cleaners():
-        # reset_event_listener_registry()
-        engine.execute("drop schema public cascade; create schema public;")
-        # Remove any migrations that were left behind
-        # TEST_VERSIONS_ROOT.mkdir(exist_ok=True, parents=True)
-        # shutil.rmtree(TEST_VERSIONS_ROOT)
-        # TEST_VERSIONS_ROOT.mkdir(exist_ok=True, parents=True)
-        # engine.execute(DROP_ALL_FUNCTIONS_SQL)
 
-    run_cleaners()
 
-    yield
 
-    run_cleaners()
+def upgrade_db(postgres_server, revision):
+    print("UPGRADING DB --------------")
+    alembic_upgrade(config=postgres_server[ "alembic_cfg"], revision=revision)
+
+
+def downgrade_db(postgres_server, revision):
+    alembic_downgrade(config=postgres_server[ "alembic_cfg"], revision=revision)
+
+
+
+@pytest.fixture(scope='function')
+def alembic( pg):
+    alembic_cfg = pg['alembic_cfg']
+    yield alembic_cfg
+    print('\n----- CREATE alembic_cfg\n')
+
+    # session.rollback()
+    # session.close()
+    print('\n----- ROLLBACK alembic_cfg\n')
+
+@pytest.fixture(scope='function')
+def session( pg):
+    session = pg['session_factory']()
+    yield session
+    print('\n----- CREATE DB SESSION\n')
+
+    session.rollback()
+    session.close()
+    print('\n----- ROLLBACK DB SESSION\n')
+
