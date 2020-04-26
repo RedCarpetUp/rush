@@ -1,45 +1,45 @@
-# name: Tests
+name: Tests
 
-# on: [push]
+on: [push]
 
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-#     services:
+    services:
 
-#       postgres:
-#         image: postgres:12
-#         env:
-#           POSTGRES_DB: alem_db
-#           POSTGRES_HOST: localhost
-#           POSTGRES_USER: alem_user
-#           POSTGRES_PASSWORD: password
+      postgres:
+        image: postgres:12
+        env:
+          POSTGRES_DB: alem_db
+          POSTGRES_HOST: localhost
+          POSTGRES_USER: alem_user
+          POSTGRES_PASSWORD: password
 
-#         ports:
-#         - 5680:5432
-#         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+        ports:
+        - 5680:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
-#     steps:
-#     - uses: actions/checkout@v1
-#     - name: Set up Python 3.8
-#       uses: actions/setup-python@v1
-#       with:
-#         python-version: 3.8
-#     - name: Install
-#       run: |
-#         pip install --upgrade pip
-#         pip install -e ".[dev]"
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+    - name: Install
+      run: |
+        pip install --upgrade pip
+        pip install -e ".[dev]"
 
-#     - name: Run Tests
-#       run: |
-#         pytest --mypy --black --isort --cov=rush --cov-report=xml --cov-report=term
+    - name: Run Tests
+      run: |
+        pytest --mypy --black --isort --cov=rush --cov-report=xml --cov-report=term
 
-#     - name: Upload coverage to Codecov
-#       uses: codecov/codecov-action@v1
-#       with:
-#         token: ${{ secrets.CODECOV_TOKEN }}
-#         file: ./coverage.xml
-#         flags: unittests
-#         name: codecov-umbrella
-#         fail_ci_if_error: true
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: true

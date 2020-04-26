@@ -1,25 +1,25 @@
-repos:
+# repos:
 
-# -   repo: https://github.com/pre-commit/pre-commit-hooks
-#     rev: v2.3.0
+# # -   repo: https://github.com/pre-commit/pre-commit-hooks
+# #     rev: v2.3.0
+# #     hooks:
+# #     - id: check-ast
+# #     - id: check-added-large-files
+# #     - id: check-case-conflict
+# #     - id: check-merge-conflict
+# #     - id: mixed-line-ending
+# #       args: ['--fix=lf']
+# #     - id: trailing-whitespace
+
+# # -   repo: https://github.com/timothycrosley/isort
+# #     rev: 4.3.21-2
+# #     hooks:
+# #     - id: isort
+# #       args: ['--multi-line=3', '--trailing-comma', '--force-grid-wrap=0', '--use-parentheses', '--line-width=100']
+
+# -   repo: https://github.com/ambv/black
+#     rev: stable
 #     hooks:
-#     - id: check-ast
-#     - id: check-added-large-files
-#     - id: check-case-conflict
-#     - id: check-merge-conflict
-#     - id: mixed-line-ending
-#       args: ['--fix=lf']
-#     - id: trailing-whitespace
-
--   repo: https://github.com/timothycrosley/isort
-    rev: 4.3.21-2
-    hooks:
-    - id: isort
-      args: ['--multi-line=3', '--trailing-comma', '--force-grid-wrap=0', '--use-parentheses', '--line-width=100']
-
--   repo: https://github.com/ambv/black
-    rev: stable
-    hooks:
-    - id: black
-      language_version: python3.8
-      args: ['--line-length=100']
+#     - id: black
+#       language_version: python3.8
+#       args: ['--line-length=100']
