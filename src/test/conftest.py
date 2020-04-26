@@ -19,11 +19,10 @@ import sqlalchemy
 from alembic.command import downgrade as alembic_downgrade
 from alembic.command import upgrade as alembic_upgrade
 from alembic.config import Config as AlembicConfig
+from parse import Result, parse
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker
-
-from parse import Result, parse
 
 # from rush.pg_function import PGFunction
 

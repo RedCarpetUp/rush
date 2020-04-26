@@ -32,6 +32,7 @@ setup(
         "pytest-mypy",
         "pytest-black",
         "pytest-isort",
+        "isort",
         "pytest-cov",
     ],
     extras_require={"dev": DEV_REQUIRES},
