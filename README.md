@@ -5,4 +5,4 @@
 - run `python setup.py install` to install dependencies. keep setup.py updated
   - rerun `python setup.py install` if you make changes to models/source code. not needed for testcase changes
 - run `pytest --mypy` to run your tests
-- all source code is under `src/app_utils/` . That is where you should make your code
+- all source code is under `src/rush/` . That is where you should make your code

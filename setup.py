@@ -12,23 +12,30 @@ DEV_REQUIRES = [
 ]
 
 setup(
-    name="app_utils",
+    name="rush",
     version="0.1",
     author="Sandeep Srinivasa",
     author_email="sss@redcarpetup.com",
     license="MIT",
     description="A starter project to create a standalone TDD project with docker based postgresql fixtures",
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     packages=find_packages("src"),
     package_dir={"": "src"},
-    install_requires=["alembic", "psycopg2-binary", "sqlalchemy", "parse", "pytest", "pydantic", "docker",
-                        "pytest-mypy"],
-    extras_require={
-        "dev": DEV_REQUIRES
-    },
+    install_requires=[
+        "alembic",
+        "psycopg2-binary",
+        "sqlalchemy",
+        "parse",
+        "pytest",
+        "pydantic",
+        "docker",
+        "pytest-mypy",
+        "p",
+    ],
+    extras_require={"dev": DEV_REQUIRES},
     include_package_data=True,
     classifiers=[
-        "License :: OSI Approved :: MIT License",
+        "License :: OSI Approved :: Apache Software License",
         "Intended Audience :: Developers",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.7",

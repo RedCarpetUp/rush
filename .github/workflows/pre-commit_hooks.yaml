@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: checkout app_utils
+    - name: checkout rush
       uses: actions/checkout@v2
 
     - name: set up python 3.7

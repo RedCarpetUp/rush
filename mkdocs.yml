@@ -1,11 +1,11 @@
-site_name: app_utils
+site_name: rush
 site_description: A starter project to create a standalone TDD project with docker based postgresql fixtures 
 
 theme:
     name: 'readthedocs'
 
-repo_name: redcarpetup/app_utils
-repo_url: https://github.com/redcarpetup/app_utils
+repo_name: redcarpetup/rush
+repo_url: https://github.com/redcarpetup/rush
 
 nav:
     - Introduction: 'index.md'
