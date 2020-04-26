@@ -4,5 +4,6 @@
 - setup virtualenv using `virtualenv env` and activate it
 - run `python setup.py install` to install dependencies. keep setup.py updated
   - rerun `python setup.py install` if you make changes to models/source code. not needed for testcase changes
-- run `pytest --mypy` to run your tests
+- run `pytest --mypy --black` to run your tests
+  - if black formatting tests fail, just run `black .` from your top level directory. Alternatively you can setup black in vscode (I highly recommend setting up all three ***"format on paste/save/type"***)
 - all source code is under `src/rush/` . That is where you should make your code
