@@ -68,40 +68,36 @@ def docker_client() -> docker.DockerClient:
 def postgres_server(docker_client: docker.DockerClient) -> Iterator[Dict[str, str]]:
     connection_template = "postgresql://{user}:{pw}@{host}:{port:d}/{db}"
     conn_args = parse(connection_template, PYTEST_DB)
-
-    # Don't attempt to instantiate a container if
-    # we're on CI
-    if "GITHUB_SHA" in os.environ:
-        yield {"a": "a"}
-        return
-
     container_name = "rush_pg"
 
     cont = None
 
-    try:
-        cont = docker_client.containers.get(container_name)
-    except Exception as e:
-        cont = docker_client.containers.run(
-            image="postgres:12",
-            name=container_name,
-            detach=True,
-            auto_remove=True,
-            remove=True,
-            ports={5432: conn_args["port"]},
-            environment={
-                "POSTGRES_DB": f"{conn_args['db']}",
-                # 'POSTGRES_HOST_AUTH_METHOD': 'trust',
-                "POSTGRES_USER": f"{conn_args['user']}",
-                "POSTGRES_PASSWORD": f"{conn_args['pw']}",
-            },
-            healthcheck={
-                "test": ["CMD", "pg_isready"],
-                "interval": 1000000 * 10000,
-                "timeout": 1000000 * 3000,
-                "retries": 10,
-            },
-        )
+    # Don't attempt to instantiate a container if
+    # we're on CI
+    if "GITHUB_SHA" not in os.environ:
+        try:
+            cont = docker_client.containers.get(container_name)
+        except Exception as e:
+            cont = docker_client.containers.run(
+                image="postgres:12",
+                name=container_name,
+                detach=True,
+                auto_remove=True,
+                remove=True,
+                ports={5432: conn_args["port"]},
+                environment={
+                    "POSTGRES_DB": f"{conn_args['db']}",
+                    # 'POSTGRES_HOST_AUTH_METHOD': 'trust',
+                    "POSTGRES_USER": f"{conn_args['user']}",
+                    "POSTGRES_PASSWORD": f"{conn_args['pw']}",
+                },
+                healthcheck={
+                    "test": ["CMD", "pg_isready"],
+                    "interval": 1000000 * 10000,
+                    "timeout": 1000000 * 3000,
+                    "retries": 10,
+                },
+            )
     wait_for_postgres(conn_args)
     engine = create_engine(PYTEST_DB, echo=True)
     session_factory = sessionmaker(bind=engine)
@@ -113,6 +109,9 @@ def postgres_server(docker_client: docker.DockerClient) -> Iterator[Dict[str, st
     print(_db)
 
     yield _db
+
+    # this line needed otherwise mypy will cry
+    assert cont is not None
     cont.stop(timeout=1)
 
 

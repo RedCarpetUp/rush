@@ -33,7 +33,7 @@ jobs:
 
     - name: Run Tests
       run: |
-        pytest --cov=rush src/test --cov-report=xml
+        pytest --mypy --black --isort --cov=rush --cov-report=xml --cov-report=term
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
