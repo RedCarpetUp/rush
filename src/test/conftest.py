@@ -9,7 +9,7 @@ import subprocess
 import sys
 import time
 from pathlib import Path
-from typing import Dict, Iterator
+from typing import Dict, Iterator, Type
 
 import alembic
 import docker
@@ -163,7 +163,7 @@ def getAlembic(pg: Dict[str, AlembicConfig]) -> Iterator[AlembicConfig]:
 
 @pytest.fixture(scope="function")
 def session(
-    pg: Dict[str, sqlalchemy.orm.session.Session]
+    pg: Dict[str, Type[sqlalchemy.orm.session.Session]]
 ) -> Iterator[sqlalchemy.orm.session.Session]:
     session = pg["session_factory"]()
     yield session
