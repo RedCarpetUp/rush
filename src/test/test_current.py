@@ -4,6 +4,7 @@ from io import StringIO
 import alembic
 import sqlalchemy
 from alembic.command import current as alembic_current
+
 from rush.exceptions import *
 from rush.models import User, UserPy
 
