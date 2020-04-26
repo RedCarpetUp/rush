@@ -3,8 +3,7 @@ from typing import Optional
 
 from pydantic import EmailStr
 from pydantic.dataclasses import dataclass as py_dataclass
-from sqlalchemy import (Column, ForeignKey, Integer, MetaData, String, Table,
-                        Text, create_engine)
+from sqlalchemy import Column, ForeignKey, Integer, MetaData, String, Table, Text, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import mapper, relationship, sessionmaker
 
