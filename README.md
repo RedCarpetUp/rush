@@ -1,5 +1,5 @@
 
-###Setup
+### Setup
 - make sure you are using python > 3.8+
 - setup virtualenv using `virtualenv env` and activate it
 - run `pip install -e "."` to install dependencies. keep setup.py updated
