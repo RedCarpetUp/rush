@@ -1,39 +1,29 @@
 # pylint: disable=redefined-outer-name,no-member
 
+import contextlib
 import json
+import logging
 import os
 import shutil
 import subprocess
 import sys
 import time
-import logging
 from pathlib import Path
+from typing import Dict, Iterator
 
 import alembic
-import pytest
-from parse import parse, Result
-import sqlalchemy
-from sqlalchemy import create_engine, text
-from sqlalchemy.engine import Engine
-from sqlalchemy.orm import sessionmaker
-import alembic
-from alembic.command import upgrade as alembic_upgrade
-from alembic.command import downgrade as alembic_downgrade
-from alembic.config import Config as AlembicConfig
-
-from typing import Iterator, Dict
-
-import os
-from pathlib import Path
-
-import contextlib
-import os
-import time
-
 import docker
 import psycopg2
 import pytest
+import sqlalchemy
+from alembic.command import downgrade as alembic_downgrade
+from alembic.command import upgrade as alembic_upgrade
+from alembic.config import Config as AlembicConfig
+from sqlalchemy import create_engine, text
+from sqlalchemy.engine import Engine
+from sqlalchemy.orm import sessionmaker
 
+from parse import Result, parse
 
 # from rush.pg_function import PGFunction
 

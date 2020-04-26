@@ -1,10 +1,12 @@
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Table, Text, MetaData, Column, Integer, String, ForeignKey, create_engine
-from sqlalchemy.orm import mapper, relationship, sessionmaker
+from dataclasses import dataclass
 from typing import Optional
+
 from pydantic import EmailStr
 from pydantic.dataclasses import dataclass as py_dataclass
-from dataclasses import dataclass
+from sqlalchemy import (Column, ForeignKey, Integer, MetaData, String, Table,
+                        Text, create_engine)
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import mapper, relationship, sessionmaker
 
 Base = declarative_base()
 
