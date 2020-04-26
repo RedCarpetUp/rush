@@ -8,7 +8,7 @@ jobs:
 
     services:
 
-      postgres:
+      rush_pg:
         image: postgres:12
         env:
           POSTGRES_DB: alem_db
