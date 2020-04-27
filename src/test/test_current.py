@@ -4,6 +4,7 @@ from io import StringIO
 import alembic
 import sqlalchemy
 from alembic.command import current as alembic_current
+
 from rush.exceptions import *
 from rush.models import User, UserPy
 
@@ -23,7 +24,7 @@ def test_current(getAlembic: alembic.config.Config) -> None:
 
 def test_user2(session: sqlalchemy.orm.session.Session) -> None:
     u = User(
-        id=101,
+        # id=101,
         performed_by=123,
         user_id=101,
         name="dfd",
@@ -36,7 +37,7 @@ def test_user2(session: sqlalchemy.orm.session.Session) -> None:
     a = session.query(User).first()
     print(a.id)
     u = UserPy(
-        id=101,
+        id=a.id,
         performed_by=123,
         email="sss",
         user_id=101,
@@ -48,7 +49,7 @@ def test_user2(session: sqlalchemy.orm.session.Session) -> None:
 
 def test_user(session: sqlalchemy.orm.session.Session) -> None:
     u = User(
-        id=100,
+        # id=100,
         performed_by=123,
         user_id=101,
         name="dfd",
@@ -61,7 +62,7 @@ def test_user(session: sqlalchemy.orm.session.Session) -> None:
     a = session.query(User).first()
     print(a.id)
     u = UserPy(
-        id=100,
+        id=a.id,
         performed_by=123,
         email="sss",
         user_id=101,

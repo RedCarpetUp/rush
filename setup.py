@@ -33,6 +33,7 @@ setup(
         "pytest-black",
         "pytest-isort",
         "isort",
+        "pendulum",
         "pytest-cov",
     ],
     extras_require={"dev": DEV_REQUIRES},

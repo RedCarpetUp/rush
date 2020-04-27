@@ -25,6 +25,8 @@ def upgrade() -> None:
         sa.Column("email", sa.String(), nullable=False),
         sa.Column("fullname", sa.String(), nullable=False),
         sa.Column("nickname", sa.String(), nullable=False),
+        sa.Column("created_at", sa.TIMESTAMP(), nullable=False),
+        sa.Column("updated_at", sa.TIMESTAMP(), nullable=False),
         sa.PrimaryKeyConstraint("id"),
     )
     # pass
