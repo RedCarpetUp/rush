@@ -1,3 +1,22 @@
+<p>
+    <a href="https://github.com/RedCarpetUp/rush/actions">
+        <img src="https://github.com/RedCarpetUp/rush/workflows/Tests/badge.svg" alt="Test Status" height="18">
+    </a>
+    <a href="https://github.com/RedCarpetUp/rush/actions">
+        <img src="https://github.com/RedCarpetUp/rush/workflows/pre-commit%20hooks/badge.svg" alt="Pre-commit Status" height="18">
+    </a>
+    <a href="https://codecov.io/gh/RedCarpetUp/rush"><img src="https://codecov.io/gh/RedCarpetUp/rush/branch/master/graph/badge.svg" height="18"></a>
+</p>
+<p>
+    <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.8+-blue.svg" alt="Python version" height="18"></a>
+    <a href="https://github.com/RedCarpetUp/rush/blob/master/LICENSE"><img src="https://img.shields.io/pypi/l/markdown-subtemplate.svg" alt="License" height="18"></a>
+    <a href="https://badge.fury.io/py/alembic_utils"><img src="https://badge.fury.io/py/alembic_utils.svg" alt="PyPI version" height="18"></a>
+    <a href="https://github.com/psf/black">
+        <img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Codestyle Black" height="18">
+    </a>
+</p>
+
+
 
 ### Setup
 - make sure you are using python > 3.8+
