@@ -38,7 +38,6 @@ def test_user2(session: sqlalchemy.orm.session.Session) -> None:
     session.add(u)
     session.commit()
     a = session.query(User).first()
-    print(a.id)
     u = UserPy(
         id=a.id,
         performed_by=123,
@@ -47,6 +46,8 @@ def test_user2(session: sqlalchemy.orm.session.Session) -> None:
         name="dfd",
         fullname="dfdf",
         nickname="dfdd",
+        created_at=a.created_at,
+        updated_at=a.updated_at,
     )
 
 
@@ -63,7 +64,6 @@ def test_user(session: sqlalchemy.orm.session.Session) -> None:
     session.add(u)
     session.commit()
     a = session.query(User).first()
-    print(a.id)
     u = UserPy(
         id=a.id,
         performed_by=123,
@@ -72,4 +72,6 @@ def test_user(session: sqlalchemy.orm.session.Session) -> None:
         name="dfd",
         fullname="dfdf",
         nickname="dfdd",
+        created_at=a.created_at,
+        updated_at=a.updated_at,
     )

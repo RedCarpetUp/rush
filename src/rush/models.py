@@ -37,7 +37,6 @@ def get_current_ist_time():
 class AuditMixin(Base):
     __abstract__ = True
     id = Column(Integer, primary_key=True)
-    performed_by = Column(Integer, nullable=True)
     created_at = Column(TIMESTAMP, default=get_current_ist_time(), nullable=False)
     updated_at = Column(TIMESTAMP, default=get_current_ist_time(), nullable=False)
     performed_by = Column(Integer, default=1, nullable=True)
@@ -98,6 +97,8 @@ class User(AuditMixin):
 class AuditMixinPy:
     id: int
     performed_by: int
+    created_at: DateTime
+    updated_at: DateTime
 
 
 @py_dataclass
