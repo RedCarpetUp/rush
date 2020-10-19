@@ -25,6 +25,7 @@ setup(
     packages=find_packages("src"),
     package_dir={"": "src"},
     install_requires=[
+        "hypothesis",
         "alembic",
         "psycopg2-binary",
         "sqlalchemy",
