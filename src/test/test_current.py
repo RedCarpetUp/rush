@@ -32,9 +32,8 @@ def test_current(getAlembic: alembic.config.Config) -> None:
 
 def test_user2(session: sqlalchemy.orm.session.Session) -> None:
     u = User(
-        # id=101,
         performed_by=123,
-        user_id=101,
+        id=101,
         name="dfd",
         fullname="dfdf",
         nickname="dfdd",
@@ -48,7 +47,6 @@ def test_user2(session: sqlalchemy.orm.session.Session) -> None:
         id=a.id,
         performed_by=123,
         email="sss",
-        user_id=101,
         name="dfd",
         fullname="dfdf",
         nickname="dfdd",
@@ -57,9 +55,8 @@ def test_user2(session: sqlalchemy.orm.session.Session) -> None:
 
 def test_user(session: sqlalchemy.orm.session.Session) -> None:
     u = User(
-        # id=100,
         performed_by=123,
-        user_id=101,
+        id=102,
         name="dfd",
         fullname="dfdf",
         nickname="dfdd",
@@ -68,12 +65,10 @@ def test_user(session: sqlalchemy.orm.session.Session) -> None:
     session.add(u)
     session.commit()
     a = session.query(User).first()
-    print(a.id)
     u = UserPy(
-        id=a.id,
         performed_by=123,
         email="sss",
-        user_id=101,
+        id=a.id,
         name="dfd",
         fullname="dfdf",
         nickname="dfdd",
@@ -81,12 +76,11 @@ def test_user(session: sqlalchemy.orm.session.Session) -> None:
 
 
 # if you remove min_value=2, you will see the errors
-@given(integers(min_value=2, max_value=999999))
-def test_user3(session: sqlalchemy.orm.session.Session, user_id: int) -> None:
+@given(integers(min_value=103, max_value=999999))
+def test_user3(session: sqlalchemy.orm.session.Session, id: int) -> None:
     u = User(
-        # id=100,
         performed_by=123,
-        user_id=user_id,
+        id=id,
         name="dfd",
         fullname="dfdf",
         nickname="dfdd",
@@ -95,12 +89,10 @@ def test_user3(session: sqlalchemy.orm.session.Session, user_id: int) -> None:
     session.add(u)
     session.commit()
     a = session.query(User).first()
-    print(a.id)
     u = UserPy(
-        id=a.id,
         performed_by=123,
         email="sss",
-        user_id=101,
+        id=a.id,
         name="dfd",
         fullname="dfdf",
         nickname="dfdd",

@@ -34,7 +34,7 @@ from sqlalchemy import (
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker
 
-# from rush.pg_function import PGFunction
+from rush.models import Base
 
 REPO_ROOT = Path(os.path.abspath(os.path.dirname(__file__))).parent.parent.resolve()
 TEST_RESOURCE_ROOT = REPO_ROOT / "src" / "test" / "resources"
@@ -127,8 +127,10 @@ def postgres_server(docker_client: docker.DockerClient) -> Iterator[Dict[str, st
 
 @pytest.fixture(scope="session")
 def pg(postgres_server: Dict[str, str]) -> Iterator[Dict[str, str]]:
+    Base.metadata.create_all(postgres_server["engine"])
     upgrade_db(postgres_server, "head")
     yield postgres_server
+    Base.metadata.drop_all(postgres_server["engine"])
     downgrade_db(postgres_server, "base")
 
 

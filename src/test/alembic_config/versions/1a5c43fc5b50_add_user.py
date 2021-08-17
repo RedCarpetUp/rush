@@ -16,20 +16,7 @@ depends_on = None
 
 
 def upgrade() -> None:
-    op.create_table(
-        "users",
-        sa.Column("id", sa.Integer(), nullable=False),
-        sa.Column("performed_by", sa.Integer(), nullable=False),
-        sa.Column("user_id", sa.Integer(), nullable=False),
-        sa.Column("name", sa.String(), nullable=False),
-        sa.Column("email", sa.String(), nullable=False),
-        sa.Column("fullname", sa.String(), nullable=False),
-        sa.Column("nickname", sa.String(), nullable=False),
-        sa.Column("created_at", sa.TIMESTAMP(), nullable=False),
-        sa.Column("updated_at", sa.TIMESTAMP(), nullable=False),
-        sa.PrimaryKeyConstraint("id"),
-    )
-    # pass
+    pass
 
 
 def downgrade() -> None:
