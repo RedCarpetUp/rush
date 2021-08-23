@@ -22,15 +22,17 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Setup cache
-      uses: actions/cache@v1
-      with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('setup.py') }}
     - name: Set up Python 3.8
       uses: actions/setup-python@v1
       with:
         python-version: 3.8
+    - name: Setup cache
+      uses: actions/cache@v1
+      with:
+          path: ${{ env.pythonLocation }}
+          key: ${{ env.pythonLocation }}-pip-${{ hashFiles('setup.py') }}
+          restore-keys: |
+            ${{ env.pythonLocation }}-pip-        
     - name: Install
       run: |
         pip install --upgrade pip
